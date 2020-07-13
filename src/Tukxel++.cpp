@@ -8,13 +8,19 @@
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-const float verticies[] = {
-    -0.5f, -0.5f, 0.0f,
-    0.5f, -0.5f, 0.0f,
-    0.0f, 0.5f, 0.0f
+float vertices[] = {
+    0.5f, 0.5f, 0.0f, // top right
+    0.5f, -0.5f, 0.0f, // bottom right
+    -0.5f, -0.5f, 0.0f, // bottom left
+    -0.5f, 0.5f, 0.0f // top left
+};
+unsigned int indices[] = { // note that we start from 0!
+    0, 1, 3, // first triangle
+    1, 2, 3 // second triangle
 };
 
-unsigned int VBO, VAO;
+
+unsigned int VBO, VAO, EBO;
 unsigned int vertexShader, fragmentShader, shaderProgram;
 
 int main() {
@@ -49,14 +55,14 @@ int main() {
         return -1;
     }
     std::cout << "Initalized" << std::endl;
-    long lastTime = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    long long lastTime = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     double ammountOfTicks = 20.0;
     double ns = 1000000000.0 / ammountOfTicks;
     double delta = 0;
-    long timer = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    long long timer = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     int frames = 0;
     while (!glfwWindowShouldClose(window)) {
-        long now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+        long long now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
         delta += (now - lastTime) / ns;
         lastTime = now;
         while (delta >= 1) {
@@ -75,7 +81,6 @@ int main() {
 
     glfwTerminate();
     std::cout << "Terminated GLFW" << std::endl;
-    std::cin.get();
     return 0;
 }
 
@@ -89,7 +94,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 int loadShader(const char* location, unsigned int& shaderDest, GLenum type) {
-    unsigned int shader = glCreateShader(GL_VERTEX_SHADER);
+    unsigned int shader = glCreateShader(type);
     std::ifstream file(location, std::ios::in);
     if (!file) {
         std::cout << "Unable to open File" << std::endl;
@@ -116,12 +121,19 @@ int loadShader(const char* location, unsigned int& shaderDest, GLenum type) {
 
 int init() {
     //Load Triangles
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(verticies), verticies, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
-        (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
 
     //Load Vertex Shader
     int ret = loadShader("shaders/VertexShader.txt", vertexShader, GL_VERTEX_SHADER);
@@ -164,13 +176,14 @@ void update(GLFWwindow* window) {
 
 void render(GLFWwindow* window) {
     //Clear Screen
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     //Render
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 
     //Set Screen
     glfwSwapBuffers(window);
