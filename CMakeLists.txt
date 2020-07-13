@@ -8,7 +8,7 @@ project("Tukxel++")
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
-add_executable(Tukxel++ ${SRC_DIR}/Tukxel++.cpp)
+add_executable(Tukxel++ "src/Tukxel++.cpp" "src/Tukxel++.h")
 
 set_target_properties(Tukxel++ PROPERTIES LINKER_LANGUAGE CXX)
 
@@ -16,6 +16,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${SRC_DIR})
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
+include_directories(${SRC_DIR}/shaders)
 
 set(GLFW_DIR ${LIB_DIR}/glfw)
 set(GLFW_BUILD_EXAMPLES OFF CACHE INTERNAL "Build the GLFW example programs")

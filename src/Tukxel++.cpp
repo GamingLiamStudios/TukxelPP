@@ -1,16 +1,21 @@
-﻿#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+﻿#include "Tukxel++.h"
 
-#include <chrono>
+#include <string>
+#include <fstream>
+#include <streambuf>
 #include <iostream>
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow* window);
-void update(GLFWwindow* window);
-void render(GLFWwindow* window);
+#include <chrono>
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+const float verticies[] = {
+    -0.5f, -0.5f, 0.0f,
+    0.5f, -0.5f, 0.0f,
+    0.0f, 0.5f, 0.0f
+};
+
+unsigned int VBO, VAO;
+unsigned int vertexShader, fragmentShader, shaderProgram;
 
 int main() {
     glfwInit();
@@ -23,7 +28,7 @@ int main() {
 #endif
     std::cout << "Initalized GLFW" << std::endl;
 
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Tukxel++", NULL, NULL);
     if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -39,16 +44,20 @@ int main() {
     }
     std::cout << "Initalized GLAD" << std::endl;
 
-    auto lastTime = std::chrono::high_resolution_clock::now();
+    if (init() != 0) {
+        std::cin.get();
+        return -1;
+    }
+    std::cout << "Initalized" << std::endl;
+    long lastTime = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     double ammountOfTicks = 20.0;
     double ns = 1000000000.0 / ammountOfTicks;
     double delta = 0;
-    long timer = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch())
-        .count();
+    long timer = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     int frames = 0;
     while (!glfwWindowShouldClose(window)) {
-        auto now = std::chrono::high_resolution_clock::now();
-        delta += std::chrono::duration_cast<std::chrono::nanoseconds>(now - lastTime).count() / ns;
+        long now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+        delta += (now - lastTime) / ns;
         lastTime = now;
         while (delta >= 1) {
             update(window);
@@ -57,9 +66,8 @@ int main() {
         if (!glfwWindowShouldClose(window))
             render(window);
         frames++;
-        if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch())
-                .count() - timer > 1000) {
-            timer += 1000;
+        if (std::chrono::high_resolution_clock::now().time_since_epoch().count() - timer > 1000000000) {
+            timer += 1000000000;
             std::cout << "FPS: " << frames << std::endl;
             frames = 0;
         }
@@ -67,6 +75,7 @@ int main() {
 
     glfwTerminate();
     std::cout << "Terminated GLFW" << std::endl;
+    std::cin.get();
     return 0;
 }
 
@@ -79,6 +88,76 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
+int loadShader(const char* location, unsigned int& shaderDest, GLenum type) {
+    unsigned int shader = glCreateShader(GL_VERTEX_SHADER);
+    std::ifstream file(location, std::ios::in);
+    if (!file) {
+        std::cout << "Unable to open File" << std::endl;
+        return -1;
+    }
+    std::string content((std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
+    const char* st = content.c_str();
+    glShaderSource(shader, 1, &st, NULL);
+    glCompileShader(shader);
+    file.close();
+    content.erase(0, content.length() - 1);
+    int success;
+    char infoLog[512];
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(shader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" <<
+            infoLog << std::endl;
+        return -1;
+    }
+    shaderDest = shader;
+    return 0;
+}
+
+int init() {
+    //Load Triangles
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(verticies), verticies, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
+        (void*)0);
+    glEnableVertexAttribArray(0);
+
+    //Load Vertex Shader
+    int ret = loadShader("shaders/VertexShader.txt", vertexShader, GL_VERTEX_SHADER);
+    if (ret != 0) {
+        std::cout << "Vertex Shader Failed to load" << std::endl;
+        return -1;
+    }
+
+    //Load Fragment Shader
+    ret = loadShader("shaders/FragmentShader.txt", fragmentShader, GL_FRAGMENT_SHADER);
+    if (ret != 0) {
+        std::cout << "Fragment Shader Failed to load" << std::endl;
+        return -1;
+    }
+    
+    //Create Shader Program and Attach Vertex & Fragment Shaders
+    shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+    int success;
+    char infoLog[512];
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" <<
+            infoLog << std::endl;
+        return -1;
+    }
+
+    //Delete Vertex & Fragment Shaders
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    return 0;
+}
+
 void update(GLFWwindow* window) {
     processInput(window);
 }
@@ -88,6 +167,10 @@ void render(GLFWwindow* window) {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    //Render
+    glUseProgram(shaderProgram);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 
     //Set Screen
     glfwSwapBuffers(window);
