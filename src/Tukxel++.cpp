@@ -1,8 +1,5 @@
 ﻿#include "Tukxel++.h"
 
-#include <string>
-#include <fstream>
-#include <streambuf>
 #include <iostream>
 #include <chrono>
 
@@ -21,7 +18,6 @@ unsigned int indices[] = { // note that we start from 0!
 
 
 unsigned int VBO, VAO, EBO;
-unsigned int vertexShader, fragmentShader, shaderProgram;
 
 int main() {
     glfwInit();
@@ -54,6 +50,7 @@ int main() {
         std::cin.get();
         return -1;
     }
+    Shader shader("shaders/VertexShader.txt", "shaders/FragmentShader.txt");
     std::cout << "Initalized" << std::endl;
     long long lastTime = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     double ammountOfTicks = 20.0;
@@ -70,7 +67,7 @@ int main() {
             delta--;
         }
         if (!glfwWindowShouldClose(window))
-            render(window);
+            render(window, shader);
         frames++;
         if (std::chrono::high_resolution_clock::now().time_since_epoch().count() - timer > 1000000000) {
             timer += 1000000000;
@@ -93,32 +90,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-int loadShader(const char* location, unsigned int& shaderDest, GLenum type) {
-    unsigned int shader = glCreateShader(type);
-    std::ifstream file(location, std::ios::in);
-    if (!file) {
-        std::cout << "Unable to open File" << std::endl;
-        return -1;
-    }
-    std::string content((std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
-    const char* st = content.c_str();
-    glShaderSource(shader, 1, &st, NULL);
-    glCompileShader(shader);
-    file.close();
-    content.erase(0, content.length() - 1);
-    int success;
-    char infoLog[512];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" <<
-            infoLog << std::endl;
-        return -1;
-    }
-    shaderDest = shader;
-    return 0;
-}
-
 int init() {
     //Load Triangles
     glGenVertexArrays(1, &VAO);
@@ -134,39 +105,11 @@ int init() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-
-    //Load Vertex Shader
-    int ret = loadShader("shaders/VertexShader.txt", vertexShader, GL_VERTEX_SHADER);
-    if (ret != 0) {
-        std::cout << "Vertex Shader Failed to load" << std::endl;
-        return -1;
-    }
-
-    //Load Fragment Shader
-    ret = loadShader("shaders/FragmentShader.txt", fragmentShader, GL_FRAGMENT_SHADER);
-    if (ret != 0) {
-        std::cout << "Fragment Shader Failed to load" << std::endl;
-        return -1;
-    }
-    
-    //Create Shader Program and Attach Vertex & Fragment Shaders
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    int success;
-    char infoLog[512];
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" <<
-            infoLog << std::endl;
-        return -1;
-    }
-
-    //Delete Vertex & Fragment Shaders
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    //Init Texture
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     return 0;
 }
 
@@ -174,13 +117,13 @@ void update(GLFWwindow* window) {
     processInput(window);
 }
 
-void render(GLFWwindow* window) {
+void render(GLFWwindow* window, Shader shader) {
     //Clear Screen
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     //Render
-    glUseProgram(shaderProgram);
+    shader.use();
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);

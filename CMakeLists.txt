@@ -8,7 +8,7 @@ project("Tukxel++")
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
-add_executable(Tukxel++ "src/Tukxel++.cpp" "src/Tukxel++.h")
+add_executable(Tukxel++ "src/Tukxel++.cpp" "src/Tukxel++.h" "src/Shader.h" "src/stb_image.h")
 
 set_target_properties(Tukxel++ PROPERTIES LINKER_LANGUAGE CXX)
 
