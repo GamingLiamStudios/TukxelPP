@@ -5,6 +5,12 @@
 
 #include <iostream>
 
+#define WIREFRAME 0
+#define FPS_CAP_ENABLED 0
+#define FPS_CAP 240
+#define VSYNC 1
+#define TICK_COUNT 20
+
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 float vertices[] = {
@@ -49,6 +55,11 @@ int main() {
     }
     std::cout << "Initalized GLAD" << std::endl;
 
+    glfwSwapInterval(VSYNC);
+#if WIREFRAME
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+#endif
+
     if (init() != 0) {
         std::cin.get();
         return -1;
@@ -56,22 +67,34 @@ int main() {
     Shader shader("res/shaders/VertexShader.txt", "res/shaders/FragmentShader.txt");
     std::cout << "Initalized" << std::endl;
     long long lastTime = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-    double ammountOfTicks = 20.0;
-    double ns = 1000000000.0 / ammountOfTicks;
+    double ns = 1000000000.0 / TICK_COUNT;
+#if FPS_CAP_ENABLED
+    double fns = 1000000000.0 / FPS_CAP;
+    double fdelta = 0;
+#endif
     double delta = 0;
     long long timer = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     int frames = 0;
     while (!glfwWindowShouldClose(window)) {
         long long now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
         delta += (now - lastTime) / ns;
-        lastTime = now;
         while (delta >= 1) {
             update(window);
             delta--;
         }
+#if FPS_CAP_ENABLED
+        fdelta += (now - lastTime) / fns;
+        if (!glfwWindowShouldClose(window) && fdelta >= 1) {
+            render(window, shader);
+            fdelta--;
+            frames++;
+        }
+#else
         if (!glfwWindowShouldClose(window))
             render(window, shader);
         frames++;
+#endif
+        lastTime = now;
         if (std::chrono::high_resolution_clock::now().time_since_epoch().count() - timer > 1000000000) {
             timer += 1000000000;
             std::cout << "FPS: " << frames << std::endl;
@@ -92,6 +115,7 @@ void processInput(GLFWwindow* window) {
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+    glfwSwapInterval(VSYNC);
 }
 
 int init() {
@@ -142,6 +166,7 @@ void dispose() {
 
 void update(GLFWwindow* window) {
     processInput(window);
+    glfwPollEvents();
 }
 
 void render(GLFWwindow* window, Shader shader) {
@@ -157,5 +182,4 @@ void render(GLFWwindow* window, Shader shader) {
 
     //Set Screen
     glfwSwapBuffers(window);
-    glfwPollEvents();
 }
