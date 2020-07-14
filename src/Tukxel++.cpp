@@ -8,17 +8,17 @@
 #define WIREFRAME 0
 #define FPS_CAP_ENABLED 0
 #define FPS_CAP 240
-#define VSYNC 1
+#define VSYNC 0
 #define TICK_COUNT 20
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 float vertices[] = {
     // positions          // colors           // texture coords
-     0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, // top right
-     0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 1.0f, // bottom right
-    -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 1.0f, // bottom left
-    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 0.0f  // top left 
+     0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+     0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+    -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
 };
 unsigned int indices[] = {
     0, 1, 3, // first triangle
@@ -59,8 +59,11 @@ int main() {
 #if WIREFRAME
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
+    stbi_set_flip_vertically_on_load(true);
 
     if (init() != 0) {
+        dispose();
+        glfwTerminate();
         std::cin.get();
         return -1;
     }
@@ -118,7 +121,38 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glfwSwapInterval(VSYNC);
 }
 
+int bindTexture(unsigned int& ID, GLenum bound, const char* location) {
+    //Init Texture
+    glActiveTexture(bound);
+    glGenTextures(1, &ID);
+    glBindTexture(GL_TEXTURE_2D, ID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    //Load Texture
+    int width, height, nrChannels;
+    unsigned char* data = stbi_load(location, &width, &height,
+        &nrChannels, 0);
+    if (!(width && (!(width & (width - 1)))) || !(height && (!(height & (height - 1))))) {
+        std::cout << "Texture at \"" << location << "\" is not power of 2" << std::endl;
+        return -1;
+    }
+    if (data) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+            GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+        std::cout << "Failed to load texture" << std::endl;
+        return -1;
+    }
+    stbi_image_free(data);
+    return 0;
+}
+
 int init() {
+    int error = 0;
     //Load Triangles
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -135,27 +169,10 @@ int init() {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    //Init Texture
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //Load Texture
-    int width, height, nrChannels;
-    unsigned char* data = stbi_load("res/pog.jpg", &width, &height,
-        &nrChannels, 0);
-    if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-            GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
-        std::cout << "Failed to load texture" << std::endl;
-        return -1;
-    }
-    stbi_image_free(data);
-    return 0;
+    //Bind Textures
+    error |= bindTexture(texture, GL_TEXTURE0, "res/pog.jpg");
+
+    return error;
 }
 
 void dispose() {
@@ -176,6 +193,7 @@ void render(GLFWwindow* window, Shader shader) {
 
     //Render
     shader.use();
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

@@ -9,5 +9,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 void update(GLFWwindow* window);
 void render(GLFWwindow* window, Shader shader);
+int bindTexture(unsigned int& ID, GLenum bound, const char* location);
 int init();
 void dispose();
