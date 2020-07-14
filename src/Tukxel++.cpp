@@ -8,8 +8,9 @@
 #define WIREFRAME 0
 #define FPS_CAP_ENABLED 0
 #define FPS_CAP 240
-#define VSYNC 0
+#define VSYNC 1
 #define TICK_COUNT 20
+#define FULLSCREEN 0
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -39,7 +40,13 @@ int main() {
 #endif
     std::cout << "Initalized GLFW" << std::endl;
 
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+#if FULLSCREEN
+    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "Tukxel++", glfwGetPrimaryMonitor(), NULL);
+#else
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Tukxel++", NULL, NULL);
+    glfwSetWindowPos(window, mode->width / 2 - SCR_WIDTH / 2, mode->height / 2 - SCR_HEIGHT / 2);
+#endif
     if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -74,6 +81,9 @@ int main() {
 #if FPS_CAP_ENABLED
     double fns = 1000000000.0 / FPS_CAP;
     double fdelta = 0;
+#elif VSYNC
+    double fns = 1000000000.0 / mode->refreshRate;
+    double fdelta = 0;
 #endif
     double delta = 0;
     long long timer = std::chrono::high_resolution_clock::now().time_since_epoch().count();
@@ -85,7 +95,7 @@ int main() {
             update(window);
             delta--;
         }
-#if FPS_CAP_ENABLED
+#if FPS_CAP_ENABLED || VSYNC
         fdelta += (now - lastTime) / fns;
         if (!glfwWindowShouldClose(window) && fdelta >= 1) {
             render(window, shader);
@@ -182,11 +192,13 @@ void dispose() {
 }
 
 void update(GLFWwindow* window) {
-    processInput(window);
-    glfwPollEvents();
+    //Update shit
 }
 
 void render(GLFWwindow* window, Shader shader) {
+    //Process Input
+    processInput(window);
+
     //Clear Screen
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -200,4 +212,5 @@ void render(GLFWwindow* window, Shader shader) {
 
     //Set Screen
     glfwSwapBuffers(window);
+    glfwPollEvents();
 }
