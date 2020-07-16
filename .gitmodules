@@ -18,3 +18,7 @@
 	path = Tukxel++/Vendor/bullet
 	url = git@github.com:bulletphysics/bullet3.git
 	branch = master
+[submodule "glfw"]
+	path = Tukxel++/Vendor/glfw
+	url = https://github.com/glfw/glfw.git
+	branch = master
