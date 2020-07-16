@@ -6,10 +6,6 @@
     path = Tukxel++/Vendor/glad
     url = https://github.com/Dav1dde/glad.git
     branch = c
-[submodule "Tukxel++/Vendor/glfw"]
-    path = Tukxel++/Vendor/glfw
-    url = https://github.com/glfw/glfw.git
-    branch = master
 [submodule "Tukxel++/Vendor/glm"]
     path = Tukxel++/Vendor/glm
     url = https://github.com/g-truc/glm.git
@@ -22,3 +18,7 @@
     path = Tukxel++/Vendor/bullet
     url = https://github.com/bulletphysics/bullet3.git
     branch = master
+[submodule "Tukxel++/Vendor/glfw"]
+	path = Tukxel++/Vendor/glfw
+	url = git@github.com:DEV0002/TukxelPP.git
+	branch = master
