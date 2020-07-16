@@ -15,9 +15,9 @@
 	url = git@github.com:nothings/stb.git
 	branch = master
 [submodule "Tukxel++/Vendor/bullet"]
-    path = Tukxel++/Vendor/bullet
-    url = https://github.com/bulletphysics/bullet3.git
-    branch = master
+	path = Tukxel++/Vendor/bullet
+	url = git@github.com:bulletphysics/bullet3.git
+	branch = master
 [submodule "Tukxel++/Vendor/glfw"]
 	path = Tukxel++/Vendor/glfw
 	url = git@github.com:DEV0002/TukxelPP.git
