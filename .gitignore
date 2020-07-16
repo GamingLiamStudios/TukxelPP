@@ -1,5 +1,5 @@
 [Bb]uild/
-Tukxel++/Vendor/*
 .vs/
+Tukxel++/Vendor/*/
 
 CMakeSettings.json
