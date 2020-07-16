@@ -1,7 +1,7 @@
 [submodule "Tukxel++/Vendor/assimp"]
-    path = Tukxel++/Vendor/assimp
-    url = https://github.com/assimp/assimp.git
-    branch = master
+	path = Tukxel++/Vendor/assimp
+	url = git@github.com:assimp/assimp.git
+	branch = master
 [submodule "Tukxel++/Vendor/glad"]
 	path = Tukxel++/Vendor/glad
 	url = git@github.com:Dav1dde/glad.git
