@@ -3,9 +3,9 @@
     url = https://github.com/assimp/assimp.git
     branch = master
 [submodule "Tukxel++/Vendor/glad"]
-    path = Tukxel++/Vendor/glad
-    url = https://github.com/Dav1dde/glad.git
-    branch = c
+	path = Tukxel++/Vendor/glad
+	url = git@github.com:Dav1dde/glad.git
+	branch = c
 [submodule "Tukxel++/Vendor/glm"]
     path = Tukxel++/Vendor/glm
     url = https://github.com/g-truc/glm.git
