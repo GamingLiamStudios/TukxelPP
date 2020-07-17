@@ -1,8 +1,7 @@
 ﻿#define WIREFRAME 0
 #define FPS_CAP_ENABLED 0
 #define FPS_CAP 240
-#define VSYNC 1
-#define TICK_COUNT 20
+#define VSYNC 0
 #define FULLSCREEN 0
 
 #include <Tukxel++.hpp>
@@ -13,45 +12,50 @@
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 float vertices[] = {
--0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
--0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
--0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
--0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
-0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
-0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
--0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
--0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
--0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
--0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
--0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
--0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
--0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
--0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
--0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
-0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
-0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
--0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
--0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
--0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
-0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
--0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
--0.5f, 0.5f, -0.5f, 0.0f, 1.0f
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
-glm::vec3 cameraPos;
+Camera camera;
 glm::mat4 model, view, projection;
 unsigned int VBO, VAO, EBO, texture;
 unsigned int modelLoc, viewLoc;
@@ -98,27 +102,21 @@ int main(void) {
     }
     std::cout << "Initalized" << std::endl;
     long long lastTime = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-    double ns = 1000000000.0 / TICK_COUNT;
-    double delta = 0;
+    double delta = 0.0f;
 #if FPS_CAP_ENABLED
     double fns = 1000000000.0 / FPS_CAP;
-    double fdelta = 0;
+    double fdelta = 0.0f;
 #elif VSYNC
     double fns = 1000000000.0 / mode->refreshRate;
-    double fdelta = 0;
+    double fdelta = 0.0f;
 #endif
-    float iTime = 0.0f;
     long long timer = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     int frames = 0;
     while (!glfwWindowShouldClose(window)) {
         long long now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-        iTime = delta += (now - lastTime) / ns;
-        while (delta >= 1) {
-            update(iTime);
-            delta--;
-            iTime++;
-        }
-#if FPS_CAP_ENABLED || VSYNC
+        delta = (now - lastTime) / 1000000000.0;
+        update(window, delta);
+#if FPS_CAP_ENABLED
         fdelta += (now - lastTime) / fns;
         if (!glfwWindowShouldClose(window) && fdelta >= 1) {
             render(window, shader);
@@ -213,7 +211,7 @@ int init(Shader &shader) {
     //Create Matricies
     model = view = projection = glm::mat4(1.0f);
     model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    view = camera.GetLookAt();
     projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
     //Set Uniform Values
@@ -234,15 +232,17 @@ void dispose() {
     glDeleteBuffers(1, &EBO);
 }
 
-void update(float iTime) {
+void update(GLFWwindow* window, float dt) {
+    //Process Input
+    processInput(window);
+    camera.HandleInput(window, dt);
+
     //Update shit
-    model = glm::rotate(model, glm::radians(iTime), glm::vec3(0.5f, 1.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(50.0f) * dt, glm::vec3(0.5f, 1.0f, 0.0f));
+    view = camera.GetLookAt();
 }
 
 void render(GLFWwindow* window, Shader shader) {
-    //Process Input
-    processInput(window);
-
     //Clear Screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);

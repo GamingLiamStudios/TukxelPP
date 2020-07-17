@@ -1,4 +1,6 @@
 #pragma once
+#ifndef SHADERH
+#define SHADERH
 
 #include <glad/glad.h>
 
@@ -123,3 +125,4 @@ public:
         glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, &mat[0][0]);
     }
 };
+#endif

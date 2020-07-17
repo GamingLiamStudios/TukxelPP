@@ -13,10 +13,11 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Shader.hpp"
+#include "Camera.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
-void update(float iTime);
+void update(GLFWwindow* window, float dt);
 void render(GLFWwindow* window, Shader shader);
 int bindTexture(unsigned int& ID, const char* location);
 int init(Shader &shader);
