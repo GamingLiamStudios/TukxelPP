@@ -1,4 +1,4 @@
-# TukxelPP
+# Tukxel++
 
 ## Summary
 Tukxel++ is a port of Tukxel, a Voxel-Like Game Engine, to C++. Tukxel++ uses [Glitter](http://polytonic.github.io/Glitter/), a dead-simple boilerplate for OpenGL intended to make the development of OpenGL applications much easier.
