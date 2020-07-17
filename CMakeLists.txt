@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-
-project("Tukxel++")
+project(Tukxel++)
 
 option(GLFW_BUILD_DOCS OFF)
 option(GLFW_BUILD_EXAMPLES OFF)
@@ -22,7 +21,7 @@ add_subdirectory(${PROJECT_NAME}/Vendor/bullet)
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /arch:AVX2")
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -mavx2")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++11 -mavx2")
     if(NOT WIN32)
         set(GLAD_LIBRARIES dl)
     endif()

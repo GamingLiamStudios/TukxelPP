@@ -117,13 +117,13 @@ int main(void) {
             update(iTime);
             delta--;
             iTime++;
-            frames++;
         }
 #if FPS_CAP_ENABLED || VSYNC
         fdelta += (now - lastTime) / fns;
         if (!glfwWindowShouldClose(window) && fdelta >= 1) {
             render(window, shader);
             fdelta--;
+            frames++;
         }
 #else
         if (!glfwWindowShouldClose(window))
