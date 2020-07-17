@@ -60,6 +60,9 @@ glm::mat4 model, view, projection;
 unsigned int VBO, VAO, EBO, texture;
 unsigned int modelLoc, viewLoc;
 
+bool firstMouse;
+float lastX, lastY;
+
 int main(void) {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -85,7 +88,10 @@ int main(void) {
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, mouse_callback);
     std::cout << "Created GLFW window" << std::endl;
+
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
@@ -100,6 +106,7 @@ int main(void) {
         std::cin.get();
         return -1;
     }
+    firstMouse = true;
     std::cout << "Initalized" << std::endl;
     long long lastTime = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     double delta = 0.0f;
@@ -150,6 +157,24 @@ void processInput(GLFWwindow* window) {
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
     glfwSwapInterval(VSYNC);
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    if (firstMouse) {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;
+    lastX = xpos;
+    lastY = ypos;
+
+    float sensitivity = 1.0f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    camera.HandleMouseInput(xoffset, yoffset);
 }
 
 int bindTexture(unsigned int& ID, const char* location) {
@@ -235,7 +260,7 @@ void dispose() {
 void update(GLFWwindow* window, float dt) {
     //Process Input
     processInput(window);
-    camera.HandleInput(window, dt);
+    camera.HandleKeyboardInput(window, dt);
 
     //Update shit
     model = glm::rotate(model, glm::radians(50.0f) * dt, glm::vec3(0.5f, 1.0f, 0.0f));
