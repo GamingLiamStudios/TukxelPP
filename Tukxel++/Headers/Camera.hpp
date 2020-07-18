@@ -17,56 +17,68 @@
 
 class Camera {
 public:
-	glm::vec3 cameraPos;
-	glm::vec3 cameraFront, cameraUp;
-	glm::vec3 direction;
-	float yaw, pitch, roll;
+	glm::vec3 Position;
+	glm::vec3 Front;
+	glm::vec3 Up;
+	glm::vec3 Right;
+	glm::vec3 WorldUp;
+	float Yaw;
+	float Pitch;
 
-	Camera() {
-		cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-		cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-		cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-		pitch = roll = 0.0f;
-		float yaw = -90.0f;
-
-		direction.x = FMath::cos(glm::radians(yaw)) * FMath::cos(glm::radians(pitch));
-		direction.y = FMath::sin(glm::radians(pitch));
-		direction.z = FMath::sin(glm::radians(yaw)) * FMath::cos(glm::radians(pitch));
-		cameraFront = glm::normalize(direction);
+	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
+		float yaw = -90, float pitch = 0) : Front(glm::vec3(0.0f, 0.0f, -1.0f)) {
+		Position = position;
+		WorldUp = up;
+		Yaw = yaw;
+		Pitch = pitch;
+		UpdateCameraVectors();
 	}
 
-	glm::mat4 GetLookAt(){
-		return glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch)
+		: Front(glm::vec3(0.0f, 0.0f, -1.0f)) {
+		Position = glm::vec3(posX, posY, posZ);
+		WorldUp = glm::vec3(upX, upY, upZ);
+		Yaw = yaw;
+		Pitch = pitch;
+		UpdateCameraVectors();
 	}
 
-	void HandleKeyboardInput(GLFWwindow* window, float deltaTime) {
-		float cameraSpeed = 2.5f * deltaTime;
+	glm::mat4 GetViewMatrix() {
+		return glm::lookAt(Position, Position + Front, Up);
+	}
+
+	void HandleKeyboardInput(GLFWwindow* window, float cameraSpeed) {
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-			cameraPos += cameraSpeed * cameraFront;
+			Position += cameraSpeed * Front;
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-			cameraPos -= cameraSpeed * cameraFront;
+			Position -= cameraSpeed * Front;
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-			cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+			Position -= glm::normalize(glm::cross(Front, Up)) * cameraSpeed;
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+			Position += glm::normalize(glm::cross(Front, Up)) * cameraSpeed;
 	}
 
 	void HandleMouseInput(float mouseDifX, float mouseDifY) {
-		yaw += mouseDifX;
-		pitch += mouseDifY;
+		Yaw += mouseDifX;
+		Pitch += mouseDifY;
 
-		std::cout << -360.0f * (yaw > 360) + 360.0f * (yaw < 0) << std::endl;
-
-		pitch = -89.9f * (pitch < -89.9f) + 89.9f * (pitch > 89.9f) + pitch * (pitch >= -89.9f && pitch <= 89.9f);
-		yaw += -360.0f * (yaw > 360) + 360.0f * (yaw < 0);
-
-		std::cout << "yaw: " << yaw << "; pitch: " << pitch << std::endl;
-
-		direction.x = FMath::cos(glm::radians(yaw)) * FMath::cos(glm::radians(pitch));
-		direction.y = FMath::sin(glm::radians(pitch));
-		direction.z = FMath::sin(glm::radians(yaw)) * FMath::cos(glm::radians(pitch));
-		cameraFront = glm::normalize(direction);
+		Pitch = -89.9f * (Pitch < -89.9f) + 89.9f * (Pitch > 89.9f) + Pitch * (Pitch >= -89.9f && Pitch <= 89.9f);
+		Yaw += -360.0f * (Yaw > 360) + 360.0f * (Yaw < 0);
+		UpdateCameraVectors();
 	}
+
+private:
+	void UpdateCameraVectors() {
+		glm::vec3 front;
+		front.x = FMath::cos(glm::radians(Yaw)) * FMath::cos(glm::radians(Pitch));
+		front.y = FMath::sin(glm::radians(Pitch));
+		front.z = FMath::sin(glm::radians(Yaw)) * FMath::cos(glm::radians(Pitch));
+		Front = glm::normalize(front);
+
+		Right = glm::normalize(glm::cross(Front, WorldUp));
+		Up = glm::normalize(glm::cross(Right, Front));
+	}
+
 };
 
 #endif

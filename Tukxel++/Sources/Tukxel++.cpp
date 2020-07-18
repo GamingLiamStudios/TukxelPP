@@ -236,7 +236,7 @@ int init(Shader &shader) {
     //Create Matricies
     model = view = projection = glm::mat4(1.0f);
     model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-    view = camera.GetLookAt();
+    view = camera.GetViewMatrix();
     projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
     //Set Uniform Values
@@ -260,11 +260,11 @@ void dispose() {
 void update(GLFWwindow* window, float dt) {
     //Process Input
     processInput(window);
-    camera.HandleKeyboardInput(window, dt);
+    camera.HandleKeyboardInput(window, 2.5f * dt);
 
     //Update shit
     model = glm::rotate(model, glm::radians(50.0f) * dt, glm::vec3(0.5f, 1.0f, 0.0f));
-    view = camera.GetLookAt();
+    view = camera.GetViewMatrix();
 }
 
 void render(GLFWwindow* window, Shader shader) {
