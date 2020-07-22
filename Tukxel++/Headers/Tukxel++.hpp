@@ -12,14 +12,17 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <cstddef>
+
 #include "Shader.hpp"
 #include "Camera.hpp"
+#include "Mesh.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void processInput(GLFWwindow* window);
 void update(GLFWwindow* window, float dt);
-void render(GLFWwindow* window, Shader shader);
+void render(GLFWwindow* window, Shader &shader);
 int bindTexture(unsigned int& ID, const char* location);
 int init(Shader &shader);
 void dispose();
