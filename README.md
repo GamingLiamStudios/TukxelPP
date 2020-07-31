@@ -1,9 +1,10 @@
 # Tukxel++
 
-## Summary
 Tukxel++ is a port of Tukxel, a Voxel-Like Game Engine, to C++. Tukxel++ uses [Glitter](http://polytonic.github.io/Glitter/), a dead-simple boilerplate for OpenGL intended to make the development of OpenGL applications much easier.
 
-Tukxel uses modules, coded in TBD, to add extra functionality.
+Tukxel uses a module system to add extra functionality*.
+
+\* Not Yet Implemented
 
 ## Getting Started
 Tukxel++ has a single dependency: [cmake](http://www.cmake.org/download/), which is used to generate platform-specific makefiles or project files. Start by cloning this repository, making sure to pass the `--recursive` flag to grab all the dependencies. If you forgot, then you can `git submodule update --init` instead.
@@ -29,4 +30,4 @@ cmake -G "Visual Studio 16 Win64" ..
 ...
 ```
 
-If you compile and run, you should now be able to use Tukxel++
+First compile will take a long time. All subsequent compiles should not take as long.
