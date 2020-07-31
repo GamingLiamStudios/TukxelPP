@@ -19,8 +19,9 @@ struct Texture {
 
 struct Mesh {
 public:
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indicies;
+    Vertex* vertices;
+    unsigned int* indicies;
+    unsigned int length;
     std::vector<Texture> textures;
 	unsigned int VAO;
 
@@ -29,27 +30,30 @@ private:
 
 public:
 	
-	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indicies, std::vector<Texture> textures) {
+	Mesh(Vertex vertices[], unsigned int indicies[], std::vector<Texture> textures) {
         this->vertices = vertices;
         this->indicies = indicies;
         this->textures = textures;
+        length = sizeof(this->vertices) / sizeof(Vertex);
 
         SetupMesh();
 	}
 
-    Mesh(std::vector<Vertex> vertices, std::vector<Texture> textures) {
+    Mesh(Vertex vertices[], std::vector<Texture> textures) {
         this->vertices = vertices;
-        indicies = std::vector<unsigned int>();
-        for (int i = 0; i < this->vertices.size(); i++)
-            indicies.push_back(i);
+        length = sizeof(this->vertices) / sizeof(Vertex);
+        indicies = new unsigned int[length];
+        for (int i = 0; i < length; i++)
+            indicies[i] = i;
         this->textures = textures;
 
         SetupMesh();
     }
 
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indicies, std::vector<const char*> textures) {
+    Mesh(Vertex vertices[], unsigned int indicies[], std::vector<const char*> textures) {
         this->vertices = vertices;
         this->indicies = indicies;
+        length = sizeof(this->vertices) / sizeof(Vertex);
         for (int i = 0; i < textures.size(); i++) {
             Texture text = Texture();
             text.path = textures[i];
@@ -61,11 +65,12 @@ public:
         SetupMesh();
     }
 
-    Mesh(std::vector<Vertex> vertices, std::vector<const char*> textures) {
+    Mesh(Vertex vertices[], std::vector<const char*> textures) {
         this->vertices = vertices;
-        indicies = std::vector<unsigned int>(this->vertices.size());
-        for (int i = 0; i < this->vertices.size(); i++)
-            indicies.push_back(i);
+        length = sizeof(this->vertices) / sizeof(Vertex);
+        indicies = new unsigned int[length];
+        for (int i = 0; i < length; i++)
+            indicies[i] = i;
         for (int i = 0; i < textures.size(); i++) {
             Texture text;
             text.path = textures[i];
@@ -100,7 +105,7 @@ public:
         }
 
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, indicies.size(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, length, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
         glActiveTexture(GL_TEXTURE0);
@@ -110,6 +115,8 @@ public:
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &VBO);
         glDeleteBuffers(1, &EBO);
+        delete[] vertices;
+        delete[] indicies;
     }
 
 private:
@@ -145,10 +152,10 @@ private:
 
         glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices[0], GL_STATIC_DRAW);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicies.size() * sizeof(unsigned int), &indicies[0], GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), &indicies[0], GL_STATIC_DRAW);
 
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
