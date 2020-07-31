@@ -29,7 +29,7 @@ private:
 
 public:
 	
-	Mesh(std::vector<Vertex> &vertices, std::vector<unsigned int> indicies, std::vector<Texture> textures) {
+	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indicies, std::vector<Texture> textures) {
         this->vertices = vertices;
         this->indicies = indicies;
         this->textures = textures;
@@ -37,7 +37,7 @@ public:
         SetupMesh();
 	}
 
-    Mesh(std::vector<Vertex> &vertices, std::vector<Texture> textures) {
+    Mesh(std::vector<Vertex> vertices, std::vector<Texture> textures) {
         this->vertices = vertices;
         indicies = std::vector<unsigned int>();
         for (int i = 0; i < this->vertices.size(); i++)
@@ -47,7 +47,7 @@ public:
         SetupMesh();
     }
 
-    Mesh(std::vector<Vertex> &vertices, std::vector<unsigned int> indicies, std::vector<const char*> textures) {
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indicies, std::vector<const char*> textures) {
         this->vertices = vertices;
         this->indicies = indicies;
         for (int i = 0; i < textures.size(); i++) {
@@ -61,13 +61,13 @@ public:
         SetupMesh();
     }
 
-    Mesh(std::vector<Vertex> &vertices, std::vector<const char*> textures) {
+    Mesh(std::vector<Vertex> vertices, std::vector<const char*> textures) {
         this->vertices = vertices;
-        indicies = std::vector<unsigned int>();
+        indicies = std::vector<unsigned int>(this->vertices.size());
         for (int i = 0; i < this->vertices.size(); i++)
             indicies.push_back(i);
         for (int i = 0; i < textures.size(); i++) {
-            Texture text = Texture();
+            Texture text;
             text.path = textures[i];
             text.type = "texture";
             bindTexture(text.id, text.path);
@@ -100,7 +100,7 @@ public:
         }
 
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, indicies.size(), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
         glActiveTexture(GL_TEXTURE0);
@@ -148,14 +148,14 @@ private:
         glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicies.size() * sizeof(unsigned int), &indicies[0], GL_STATIC_DRAW);
 
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Vertex.Normal));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::Normal));
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Vertex.TexCoords));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::TexCoords));
 
         glBindVertexArray(0);
     }

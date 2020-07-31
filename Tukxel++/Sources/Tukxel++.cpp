@@ -197,7 +197,8 @@ int init(Shader &shader) {
 
     //Load Mesh
     objects = std::vector<Mesh>();
-    objects.push_back(Mesh(vertices, textures));
+    std::vector<Vertex> a = ((std::vector<Vertex>*)&vertices)[0];
+    objects.push_back(Mesh(a, textures));
 
     //Create Matricies
     model = view = projection = glm::mat4(1.0f);
