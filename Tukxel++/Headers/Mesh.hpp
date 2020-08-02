@@ -9,7 +9,7 @@
 struct Vertex {
     glm::vec3 Position;
     glm::vec3 Normal;
-    //glm::vec2 TexCoords;
+    glm::vec2 TexCoords;
 };
 
 struct Texture {
@@ -32,30 +32,30 @@ private:
 
 public:
 	
-	Mesh(Vertex vertices[], unsigned int indicies[], std::vector<Texture> textures) {
+    Mesh(Vertex* vertices, int length, unsigned int indicies[], std::vector<Texture> textures) {
         this->vertices = vertices;
         this->indicies = indicies;
         this->textures = textures;
-        length = sizeof(this->vertices) / sizeof(Vertex);
+        this->length = length;
         noIndicies = false;
 
         SetupMesh();
 	}
 
-    Mesh(Vertex vertices[], std::vector<Texture> textures) {
+    Mesh(Vertex* vertices, int length, std::vector<Texture> textures) {
         this->vertices = vertices;
-        length = sizeof(this->vertices) / sizeof(Vertex);
+        this->length = length;
         noIndicies = true;
         this->textures = textures;
 
         SetupMesh();
     }
 
-    Mesh(Vertex vertices[], unsigned int indicies[], std::vector<const char*> textures) {
+    Mesh(Vertex* vertices, int length, unsigned int indicies[], std::vector<const char*> textures) {
         this->vertices = vertices;
         this->indicies = indicies;
         noIndicies = false;
-        length = sizeof(this->vertices) / sizeof(Vertex);
+        this->length = length;
         for (int i = 0; i < textures.size(); i++) {
             Texture text = Texture();
             text.path = textures[i];
@@ -67,9 +67,9 @@ public:
         SetupMesh();
     }
 
-    Mesh(Vertex vertices[], std::vector<const char*> textures) {
+    Mesh(Vertex* vertices, int length, std::vector<const char*> textures) {
         this->vertices = vertices;
-        length = sizeof(this->vertices) / sizeof(Vertex);
+        this->length = length;
         noIndicies = true;
         for (int i = 0; i < textures.size(); i++) {
             Texture text;
@@ -83,7 +83,8 @@ public:
     }
 
     void Draw(Shader& shader) {
-        /*unsigned int texture = 1;
+        shader.use();
+        unsigned int texture = 1;
         for (unsigned int i = 0; i < textures.size(); i++) {
             glActiveTexture(GL_TEXTURE0 + i);
             std::string number = std::to_string(1);
@@ -92,7 +93,7 @@ public:
 
             glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i);
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
-        }*/
+        }
 
         if (!noIndicies) {
             glBindVertexArray(VAO);
@@ -104,15 +105,20 @@ public:
             glDrawArrays(GL_TRIANGLES, 0, length);
             glBindVertexArray(0);
         }
-        
 
         glActiveTexture(GL_TEXTURE0);
     }
 
     void Dispose() {
+        glBindVertexArray(VAO);
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glBindVertexArray(0);
+
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &VBO);
-        glDeleteBuffers(1, &EBO);
+        if(!noIndicies)
+            glDeleteBuffers(1, &EBO);
     }
 
 private:
@@ -149,19 +155,19 @@ private:
 
         glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, length * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
         if (!noIndicies) {
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), &indicies[0], GL_STATIC_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, length * sizeof(unsigned int), &indicies[0], GL_STATIC_DRAW);
         }
 
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-        /*glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::TexCoords));*/
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
 
         glBindVertexArray(0);
     }
