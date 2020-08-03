@@ -22,6 +22,7 @@ public:
     }
 
     Object(Mesh mesh, const char* texture) {
+        this->mesh = mesh;
         this->texture = Texture();
         this->texture.path = texture;
         this->texture.type = "texture";

@@ -23,7 +23,7 @@ private:
 
 public:
 
-    Mesh() {}
+    Mesh() {};
 
     Mesh(Vertex* vertices, int length) {
         this->vertices = vertices;
