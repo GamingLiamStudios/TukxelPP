@@ -13,6 +13,7 @@
 class Shader {
 public:
 	unsigned int ID;
+    int success;
 
     Shader() {}
 	
@@ -34,7 +35,6 @@ public:
         //Compile Vertex Shader
         glShaderSource(vertexShader, 1, &vp, NULL);
         glCompileShader(vertexShader);
-        int success;
         char infoLog[512];
         glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
         if (!success) {

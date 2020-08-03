@@ -178,7 +178,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 int init(Shader &shader) {
     int error = 0;
 
-    //Init OpenGL & STB
+    //Init Libraries
     glEnable(GL_DEPTH_TEST);
     glfwSwapInterval(VSYNC);
 #if WIREFRAME
@@ -188,6 +188,9 @@ int init(Shader &shader) {
 
     //Create Shader
     shader = Shader("Shaders/VertexShader.vert", "Shaders/FragmentShader.frag");
+
+    if (!shader.success)
+        return shader.success;
 
     //Load Models
     models = std::map<std::string, Mesh>{
