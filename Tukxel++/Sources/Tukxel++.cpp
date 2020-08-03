@@ -8,10 +8,11 @@
 
 #include <iostream>
 #include <chrono>
+#include <map>
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-float vertices[] = {
+float cubeverts[] = {
     // positions // normals // texture coords
     -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
     0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
@@ -53,7 +54,8 @@ float vertices[] = {
 
 Camera camera;
 glm::mat4 model, view, projection;
-std::vector<Mesh> objects;
+std::map<std::string, Mesh> models;
+std::vector<Object> objects;
 unsigned int modelLoc, viewLoc, viewPosLoc;
 
 bool firstMouse;
@@ -183,21 +185,18 @@ int init(Shader &shader) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
     stbi_set_flip_vertically_on_load(true);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     //Create Shader
     shader = Shader("Shaders/VertexShader.vert", "Shaders/FragmentShader.frag");
 
-    //Load Textures
-    std::vector<const char*> textures = std::vector<const char*>();
-    textures.push_back("res/pog.jpg");
+    //Load Models
+    models = std::map<std::string, Mesh>{
+        {"cube", Mesh((Vertex*)&cubeverts[0], sizeof(cubeverts) / sizeof(Vertex))} //Cube
+    };
 
-    //Load Mesh
-    objects = std::vector<Mesh>();
-    objects.push_back(Mesh((Vertex*)&vertices[0], sizeof(vertices) / sizeof(Vertex), textures));
+    //Load Objects
+    objects = std::vector<Object>();
+    objects.push_back(Object(models.find("cube")->second, "res/pog.jpg"));
 
     //Create Matricies
     model = view = projection = glm::mat4(1.0f);
@@ -207,7 +206,7 @@ int init(Shader &shader) {
 
     //Set Uniform Values
     shader.use();
-    shader.setInt("texture1", 0);
+    shader.setInt("texture", 0);
     shader.setMat4("projection", projection);
     shader.setVec3("lightPos", 1.0f, 3.0f, 1.0f);
     shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
