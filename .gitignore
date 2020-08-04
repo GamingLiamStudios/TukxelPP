@@ -1,4 +1,5 @@
 [Bb]uild/
 .vs/
+[Oo]ut/
 
 CMakeSettings.json
