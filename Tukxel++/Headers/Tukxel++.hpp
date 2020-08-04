@@ -15,6 +15,7 @@
 
 #include <cstddef>
 
+#include "Util.hpp"
 #include "Shader.hpp"
 #include "Camera.hpp"
 #include "Mesh.hpp"

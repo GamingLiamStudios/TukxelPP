@@ -67,7 +67,7 @@ public:
             glGetProgramInfoLog(ID, 512, NULL, infoLog);
             std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" <<
                 infoLog << std::endl;
-            return;
+            glDeleteProgram(ID);
         }
 
         //Delete Vertex & Fragment Shaders

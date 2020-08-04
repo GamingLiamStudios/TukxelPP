@@ -199,7 +199,15 @@ int init(Shader &shader) {
 
     //Load Objects
     objects = std::vector<Object>();
-    objects.push_back(Object(models.find("cube")->second, "res/pog.jpg"));
+    Texture tex("texture", "res/pog.jpg");
+    objects.push_back(Object(&models.find("cube")->second, &tex, glm::vec3(1.0, 0.0, 0.0)));
+    objects.push_back(Object(&models.find("cube")->second, &tex, glm::vec3(1.0, 1.0, 0.0)));
+    objects.push_back(Object(&models.find("cube")->second, &tex, glm::vec3(0.0, 1.0, 0.0)));
+    objects.push_back(Object(&models.find("cube")->second, &tex, glm::vec3(0.0, 0.0, 0.0)));
+    objects.push_back(Object(&models.find("cube")->second, &tex, glm::vec3(1.0, 0.0, 1.0)));
+    objects.push_back(Object(&models.find("cube")->second, &tex, glm::vec3(1.0, 1.0, 1.0)));
+    objects.push_back(Object(&models.find("cube")->second, &tex, glm::vec3(0.0, 1.0, 1.0)));
+    objects.push_back(Object(&models.find("cube")->second, &tex, glm::vec3(0.0, 0.0, 1.0)));
 
     //Create Matricies
     model = view = projection = glm::mat4(1.0f);
@@ -233,7 +241,8 @@ void update(GLFWwindow* window, float dt) {
     camera.HandleKeyboardInput(window, 2.5f * dt);
 
     //Update shit
-    model = glm::rotate(model, glm::radians(50.0f) * dt, glm::vec3(0.5f, 1.0f, 0.0f));
+    for (int i = 0; i < objects.size(); i++)
+        objects[i].Translate(glm::vec3(1.0 * dt, 0.0, 0.0));
     view = camera.GetViewMatrix();
 }
 
@@ -244,13 +253,16 @@ void render(GLFWwindow* window, Shader &shader) {
 
     //Enable Shader
     shader.use();
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(viewPosLoc, 1, GL_FALSE, glm::value_ptr(camera.Position));
 
     //Draw
-    for (int i = 0; i < objects.size(); i++)
+    for (int i = 0; i < objects.size(); i++) {
+        model = glm::translate(model, objects[i].wsCoord);
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         objects[i].Draw(shader);
+        model = glm::mat4(1.0f);
+    }
 
     //Set Screen
     glfwSwapBuffers(window);

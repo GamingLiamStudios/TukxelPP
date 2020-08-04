@@ -13,8 +13,6 @@
 
 #include <cmath>
 
-#include "Math.hpp"
-
 class Camera {
 public:
 	glm::vec3 Position;
@@ -70,9 +68,9 @@ public:
 private:
 	void UpdateCameraVectors() {
 		glm::vec3 front;
-		front.x = FMath::cos(glm::radians(Yaw)) * FMath::cos(glm::radians(Pitch));
-		front.y = FMath::sin(glm::radians(Pitch));
-		front.z = FMath::sin(glm::radians(Yaw)) * FMath::cos(glm::radians(Pitch));
+		front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+		front.y = sin(glm::radians(Pitch));
+		front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
 		Front = glm::normalize(front);
 
 		Right = glm::normalize(glm::cross(Front, WorldUp));
