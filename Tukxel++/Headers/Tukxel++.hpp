@@ -20,6 +20,7 @@
 #include "Camera.hpp"
 #include "Mesh.hpp"
 #include "Object.hpp"
+#include "DllHandle.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
