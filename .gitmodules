@@ -1,7 +1,3 @@
-[submodule "Tukxel++/Vendor/assimp"]
-	path = Tukxel++/Vendor/assimp
-	url = git@github.com:assimp/assimp.git
-	branch = master
 [submodule "Tukxel++/Vendor/glad"]
 	path = Tukxel++/Vendor/glad
 	url = git@github.com:Dav1dde/glad.git
@@ -13,10 +9,6 @@
 [submodule "Tukxel++/Vendor/stb"]
 	path = Tukxel++/Vendor/stb
 	url = git@github.com:nothings/stb.git
-	branch = master
-[submodule "Tukxel++/Vendor/bullet"]
-	path = Tukxel++/Vendor/bullet
-	url = git@github.com:bulletphysics/bullet3.git
 	branch = master
 [submodule "glfw"]
 	path = Tukxel++/Vendor/glfw
