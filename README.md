@@ -1,10 +1,23 @@
 # Tukxel++
+Tukxel++ is a port of Tukxel, A Voxel-like Game Engine that focuses on customizability & speed, to C++. Tukxel++ uses a Stripped down version of [Glitter](http://polytonic.github.io/Glitter/), a dead-simple boilerplate for OpenGL intended to make the development of OpenGL applications much easier.
 
-Tukxel++ is a port of Tukxel, a Voxel-Like Game Engine, to C++. Tukxel++ uses [Glitter](http://polytonic.github.io/Glitter/), a dead-simple boilerplate for OpenGL intended to make the development of OpenGL applications much easier.
-
-Tukxel uses a module system to add extra functionality*.
-
-\* Not Yet Implemented
+## Planned Features(as of 8th of August 2020):
+### Cube
+The engine primarily works with cubes but supports external models.
+### Module API
+This is the main feature of Tukxel, Modules. They can be coded in C#(using [DllExport](github.com/3F/DllExport)) or C++ & are very feature-rich.
+They will be able to:
+* Add and Replace Blocks & Entities
+* Use custom Models and Textures
+* Listen for & Execute at 'Game Events'
+* Communicate with other Modules
+* Specify other Server Protocols
+* Developers Developers Developers
+### Smaller Features
+* Virtual Surround & Multi Speaker Configurations support
+* Small & Easy to Share World Files
+* Multiplayer
+* Customizable Shaders
 
 ## Getting Started
 Tukxel++ has a single dependency: [cmake](http://www.cmake.org/download/), which is used to generate platform-specific makefiles or project files. Start by cloning this repository, making sure to pass the `--recursive` flag to grab all the dependencies. If you forgot, then you can `git submodule update --init` instead.
@@ -30,4 +43,4 @@ cmake -G "Visual Studio 16 Win64" ..
 ...
 ```
 
-First compile will take a long time. All subsequent compiles should not take as long.
+First compile will take a longer than subsequent compiles.
