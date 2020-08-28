@@ -1,6 +1,8 @@
 # Tukxel++
 Tukxel++ is a port of Tukxel, A Voxel-like Game Engine that focuses on customizability & speed, to C++. Tukxel++ uses a Stripped down version of [Glitter](http://polytonic.github.io/Glitter/), a dead-simple boilerplate for OpenGL intended to make the development of OpenGL applications much easier.
 
+We also have a [Discord Server](https://discord.gg/vAcbPDD).
+
 ## Planned Features(as of 8th of August 2020):
 ### Cube
 The engine primarily works with cubes but supports external models.
@@ -44,3 +46,5 @@ cmake -G "Visual Studio 16 Win64" ..
 ```
 
 First compile will take a longer than subsequent compiles.
+
+
