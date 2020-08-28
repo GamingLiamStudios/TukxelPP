@@ -8,8 +8,6 @@
 #include <iostream>
 #include <fstream>
 
-#define NULL 0
-
 class Shader {
 public:
 	unsigned int ID;

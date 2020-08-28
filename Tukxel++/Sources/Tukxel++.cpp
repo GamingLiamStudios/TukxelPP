@@ -9,6 +9,7 @@
 #include <iostream>
 #include <chrono>
 #include <map>
+#include <filesystem>
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -56,6 +57,7 @@ Camera camera;
 glm::mat4 model, view, projection;
 std::map<std::string, Mesh> models;
 std::vector<Object> objects;
+std::string texturePath;
 unsigned int modelLoc, viewLoc, viewPosLoc;
 
 bool firstMouse;
@@ -121,7 +123,7 @@ int main(void) {
         long long now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
         delta = (now - lastTime) / 1000000000.0;
         update(window, delta);
-#if FPS_CAP_ENABLED
+#if FPS_CAP_ENABLED || VSYNC
         fdelta += (now - lastTime) / fns;
         if (!glfwWindowShouldClose(window) && fdelta >= 1) {
             render(window, shader);
@@ -185,10 +187,17 @@ int init(Shader &shader) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
     stbi_set_flip_vertically_on_load(true);
-
-    //Create Shader
-    shader = Shader("Shaders/VertexShader.vert", "Shaders/FragmentShader.frag");
-
+    
+    if(std::filesystem::exists("./Tukxel++/")) {
+        texturePath = "./Tukxel++/res/";
+        //Create Shader
+        shader = Shader("./Tukxel++/Shaders/VertexShader.vert", "./Tukxel++/Shaders/FragmentShader.frag");
+    } else {
+        texturePath = "./Resources/";
+        //Create Shader
+        shader = Shader("./Shaders/VertexShader.vert", "./Shaders/FragmentShader.frag");
+    }
+        
     if (!shader.success)
         return shader.success;
 
@@ -199,7 +208,7 @@ int init(Shader &shader) {
 
     //Load Objects
     objects = std::vector<Object>();
-    Texture tex("texture", "res/pog.jpg");
+    Texture tex("texture", (texturePath + "pog.jpg").c_str());
     objects.push_back(Object(&models.find("cube")->second, &tex, glm::vec3(1.0, 0.0, 0.0)));
     objects.push_back(Object(&models.find("cube")->second, &tex, glm::vec3(1.0, 1.0, 0.0)));
     objects.push_back(Object(&models.find("cube")->second, &tex, glm::vec3(0.0, 1.0, 0.0)));
@@ -231,7 +240,7 @@ int init(Shader &shader) {
 }
 
 void dispose() {
-    for (int i = 0; i < objects.size(); i++)
+    for (size_t i = 0; i < objects.size(); i++)
         objects[i].Dispose();
 }
 
@@ -241,7 +250,7 @@ void update(GLFWwindow* window, float dt) {
     camera.HandleKeyboardInput(window, 2.5f * dt);
 
     //Update shit
-    for (int i = 0; i < objects.size(); i++)
+    for (size_t i = 0; i < objects.size(); i++)
         objects[i].Translate(glm::vec3(1.0 * dt, 0.0, 0.0));
     view = camera.GetViewMatrix();
 }
@@ -257,11 +266,10 @@ void render(GLFWwindow* window, Shader &shader) {
     glUniformMatrix4fv(viewPosLoc, 1, GL_FALSE, glm::value_ptr(camera.Position));
 
     //Draw
-    for (int i = 0; i < objects.size(); i++) {
-        model = glm::translate(model, objects[i].wsCoord);
+    for (size_t i = 0; i < objects.size(); i++) {
+        model = glm::translate(glm::mat4(1.0f), objects[i].wsCoord);
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         objects[i].Draw(shader);
-        model = glm::mat4(1.0f);
     }
 
     //Set Screen
