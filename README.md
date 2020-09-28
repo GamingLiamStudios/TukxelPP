@@ -8,13 +8,13 @@ We also have a [Discord Server](https://discord.gg/vAcbPDD).
 The engine primarily works with cubes but supports external models.
 ### Module API
 This is the main feature of Tukxel, Modules. They can be coded in C#(using [DllExport](github.com/3F/DllExport)) or C++ & are very feature-rich.
-They will be able to:
+Some sub-features of Modules are:
 * Add and Replace Blocks & Entities
 * Use custom Models and Textures
 * Listen for & Execute at 'Game Events'
 * Communicate with other Modules
 * Specify other Server Protocols
-* Developers Developers Developers
+* Module Packs
 ### Smaller Features
 * Virtual Surround & Multi Speaker Configurations support
 * Small & Easy to Share World Files
@@ -22,7 +22,7 @@ They will be able to:
 * Customizable Shaders
 
 ## Getting Started
-Tukxel++ has a single dependency: [cmake](http://www.cmake.org/download/), which is used to generate platform-specific makefiles or project files. Start by cloning this repository, making sure to pass the `--recursive` flag to grab all the dependencies. If you forgot, then you can `git submodule update --init` instead.
+Tukxel++ has a single dependency: [cmake](http://www.cmake.org/download/), which is used to generate platform-specific makefiles or project files. Start by cloning this repository, making sure to pass the `--recursive` flag to grab all the dependencies. If you forgot, then you can do `git submodule update --init` instead.
 
 ```bash
 git clone --recursive https://github.com/DEV0002/TukxelPP
