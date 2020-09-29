@@ -16,5 +16,5 @@ class Client {
    private:
     GLFWwindow *window;
 
-    void processInput(GLFWwindow* window, int key, int scancode, int action, int mods);
+    static void processInput(GLFWwindow* window, int key, int, int action, int);
 };

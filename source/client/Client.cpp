@@ -1,6 +1,23 @@
-#include "Client.h"
+#include "client.h"
 
+#include <functional>
 #include <iostream>
+
+template <typename T>
+struct Callback;
+
+template <typename Ret, typename... Params>
+struct Callback<Ret(Params...)> {
+    template <typename... Args>
+    static Ret callback(Args... args) {
+        return func(args...);
+    }
+    static std::function<Ret(Params...)> func;
+};
+
+// Initialize the static member.
+template <typename Ret, typename... Params>
+std::function<Ret(Params...)> Callback<Ret(Params...)>::func;
 
 Client::Client() {
     // Initalize GLFW
@@ -36,7 +53,7 @@ Client::Client() {
         window, [](GLFWwindow* window, int width, int height) {
             glViewport(0, 0, width, height);
         });
-    glfwSetKeyCallback(window, processInput);
+    glfwSetKeyCallback(window, &Client::processInput);
 }
 
 Client::~Client() {
@@ -45,6 +62,7 @@ Client::~Client() {
 }
 
 void Client::render() {
+    // Check if window has been scheduled for closure
     isAlive &= !glfwWindowShouldClose(window);
 
     // Display changes
@@ -52,15 +70,13 @@ void Client::render() {
     glfwPollEvents();
 }
 
-void Client::processInput(GLFWwindow* window, int key, int scancode, int action,
-                          int mods) {
-    std::cout << "key: " << key;
-    std::cout << " scancode: " << scancode;
-    std::cout << " action: " << action;
-    std::cout << " mods: " << mods << std::endl;
+void Client::processInput(GLFWwindow* window, int key, int, int action, int) {
+    if (action == GLFW_REPEAT) return;
+    auto usr_ptr = (Client*)glfwGetWindowUserPointer(window);
+
     switch (key) {
-        case GLFW_KEY_E:
-            isAlive = false;
+        case GLFW_KEY_ESCAPE:
+            usr_ptr->isAlive = false;
             break;
     }
 }
