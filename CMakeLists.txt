@@ -30,6 +30,9 @@ set(SOURCE_FILES
 
     # MAIN
     source/main.cpp
+
+    # CLIENT
+    source/client/Client.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
