@@ -31,10 +31,12 @@ Client::Client() {
 
     // Initalize Window
     glViewport(0, 0, 800, 600);
+    glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(
         window, [](GLFWwindow* window, int width, int height) {
             glViewport(0, 0, width, height);
         });
+    glfwSetKeyCallback(window, processInput);
 }
 
 Client::~Client() {
@@ -42,8 +44,23 @@ Client::~Client() {
     glfwTerminate();
 }
 
-void Client::Render() {
+void Client::render() {
+    isAlive &= !glfwWindowShouldClose(window);
+
     // Display changes
     glfwSwapBuffers(window);
     glfwPollEvents();
+}
+
+void Client::processInput(GLFWwindow* window, int key, int scancode, int action,
+                          int mods) {
+    std::cout << "key: " << key;
+    std::cout << " scancode: " << scancode;
+    std::cout << " action: " << action;
+    std::cout << " mods: " << mods << std::endl;
+    switch (key) {
+        case GLFW_KEY_E:
+            isAlive = false;
+            break;
+    }
 }

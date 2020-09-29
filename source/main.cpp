@@ -6,7 +6,7 @@ int main() {
     std::cout << "Hello World!" << std::endl;
     Client client = Client();
     while (client.isAlive) {
-        client.Render();
-        // client.Tick(); TODO: Add Tick
+        client.render();
+        // client.tick(); TODO: Add Tick
     }
 }

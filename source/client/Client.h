@@ -4,15 +4,17 @@
 #include <glad/glad.h>
 
 class Client {
-   private:
-    GLFWwindow *window;
-
    public:
     Client();
     ~Client();
 
-    void Render();
-    void Tick();
+    void render();
+    void tick();
 
     bool isAlive;
+
+   private:
+    GLFWwindow *window;
+
+    void processInput(GLFWwindow* window, int key, int scancode, int action, int mods);
 };
