@@ -1,6 +1,7 @@
 include(FetchContent)
 
 # Include glfw
+message("Configuring GLFW")
 FetchContent_Declare(
         glfw
         GIT_REPOSITORY https://github.com/glfw/glfw
@@ -15,6 +16,7 @@ set(GLFW_INSTALL OFF)
 FetchContent_MakeAvailable(glfw)
 
 # Include glm
+message("Configuring GLM")
 FetchContent_Declare(
         glm
         GIT_REPOSITORY https://github.com/g-truc/glm
@@ -23,6 +25,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glm)
 
 # Include zlib-ng(Not currently used)
+message("Configuring zlib-ng")
 FetchContent_Declare(
         zlib_ng
         GIT_REPOSITORY https://github.com/zlib-ng/zlib-ng

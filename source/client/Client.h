@@ -3,6 +3,8 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
+#include "render/shader.h"
+
 class Client {
    public:
     Client();
@@ -14,7 +16,8 @@ class Client {
     bool isAlive;
 
    private:
-    GLFWwindow *window;
+    GLFWwindow* window;
+    Shader shader;
 
     static void processInput(GLFWwindow* window, int key, int, int action, int);
 };

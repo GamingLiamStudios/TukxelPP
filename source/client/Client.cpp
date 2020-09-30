@@ -1,23 +1,6 @@
 #include "client.h"
 
-#include <functional>
 #include <iostream>
-
-template <typename T>
-struct Callback;
-
-template <typename Ret, typename... Params>
-struct Callback<Ret(Params...)> {
-    template <typename... Args>
-    static Ret callback(Args... args) {
-        return func(args...);
-    }
-    static std::function<Ret(Params...)> func;
-};
-
-// Initialize the static member.
-template <typename Ret, typename... Params>
-std::function<Ret(Params...)> Callback<Ret(Params...)>::func;
 
 Client::Client() {
     // Initalize GLFW
@@ -34,7 +17,6 @@ Client::Client() {
     if (window == NULL) {
         std::cerr << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
-        isAlive = false;
         return;
     }
     glfwMakeContextCurrent(window);
@@ -42,9 +24,9 @@ Client::Client() {
     // Initalize GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
-        isAlive = false;
         return;
     }
+    isAlive = true;
 
     // Initalize Window
     glViewport(0, 0, 800, 600);
@@ -54,6 +36,9 @@ Client::Client() {
             glViewport(0, 0, width, height);
         });
     glfwSetKeyCallback(window, &Client::processInput);
+
+    shader = Shader("./res/vertex.vert", "./res/fragment.frag");
+    if (!shader.success) isAlive = false;
 }
 
 Client::~Client() {
@@ -64,6 +49,10 @@ Client::~Client() {
 void Client::render() {
     // Check if window has been scheduled for closure
     isAlive &= !glfwWindowShouldClose(window);
+
+    // Clear Window
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     // Display changes
     glfwSwapBuffers(window);

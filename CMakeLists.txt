@@ -32,9 +32,17 @@ set(SOURCE_FILES
     source/main.cpp
 
     # CLIENT
-    source/client/Client.cpp
+    source/client/client.cpp
+
+    # RENDER
+    source/client/render/shader.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME} glfw glm::glm)
+
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res
+    DEPENDS ${PROJECT_RESOURCES})
