@@ -10,13 +10,14 @@ Shader::Shader(std::string vertPath, std::string fragPath) {
     std::ifstream file;
     std::string text;
     char infoLog[512];
+    file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
     {  // Vertex Shader
         // Read file
         file.open(vertPath, std::ios::in | std::ios::binary | std::ios::ate);
-        text.reserve(file.tellg());
+        text.resize(file.tellg());
         file.seekg(0, std::ios::beg);
-        file.read(&text[0], text.capacity());
+        file.read(&text[0], text.size());
         file.close();
 
         // Compile
@@ -38,9 +39,9 @@ Shader::Shader(std::string vertPath, std::string fragPath) {
     {  // Fragment Shader
         // Read file
         file.open(fragPath, std::ios::in | std::ios::binary | std::ios::ate);
-        text.reserve(file.tellg());
+        text.resize(file.tellg());
         file.seekg(0, std::ios::beg);
-        file.read(&text[0], text.capacity());
+        file.read(&text[0], text.size());
         file.close();
 
         // Compile

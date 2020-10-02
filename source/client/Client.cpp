@@ -37,12 +37,13 @@ Client::Client() {
         });
     glfwSetKeyCallback(window, &Client::processInput);
 
+    // Initalize Renderer
     shader = Shader("./res/vertex.vert", "./res/fragment.frag");
     if (!shader.success) isAlive = false;
 }
 
 Client::~Client() {
-    // Destroy all GLFW stuff
+    // Destroy all remaining GLFW stuff
     glfwTerminate();
 }
 
@@ -51,8 +52,10 @@ void Client::render() {
     isAlive &= !glfwWindowShouldClose(window);
 
     // Clear Window
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+
+    // Render
 
     // Display changes
     glfwSwapBuffers(window);
