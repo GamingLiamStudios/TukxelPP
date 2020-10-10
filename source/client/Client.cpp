@@ -86,7 +86,7 @@ Client::Client()
     });
     glfwSetKeyCallback(window, &Client::processInput);
 
-    // Initalize for Rendering
+    // Initalize for Renderi
     stbi_set_flip_vertically_on_load(true);
     shader = Shader("./res/vertex.vert", "./res/fragment.frag");
     if (!shader.success) isAlive = false;
