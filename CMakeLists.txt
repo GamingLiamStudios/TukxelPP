@@ -17,7 +17,8 @@ endif()
 
 add_subdirectory(extern)
 
-include_directories(extern/glad/include
+include_directories(source
+                    extern/glad/include
                     ${glfw_SOURCE_DIR}/include
                     extern/stb)
 
@@ -36,9 +37,17 @@ set(SOURCE_FILES
 
     # RENDER
     source/client/render/shader.cpp
+    source/client/render/voxel.cpp
+
+    # WORLD
+    source/client/world/chunk.cpp
 )
 
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+if(WIN32)
+    add_executable(${PROJECT_NAME} ${SOURCE_FILES} Icon.rc)
+else()
+    add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+endif()
 
 target_link_libraries(${PROJECT_NAME} glfw glm::glm)
 

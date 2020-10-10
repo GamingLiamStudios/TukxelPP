@@ -4,11 +4,12 @@
 
 #include <string>
 
-class Shader {
-   private:
+class Shader
+{
+private:
     uint32_t program;
 
-   public:
+public:
     int success;
 
     Shader() = default;

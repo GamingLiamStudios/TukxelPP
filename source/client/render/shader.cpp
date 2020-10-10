@@ -5,14 +5,15 @@
 #include <fstream>
 #include <iostream>
 
-Shader::Shader(std::string vertPath, std::string fragPath) {
-    uint32_t vertex, fragment;
+Shader::Shader(std::string vertPath, std::string fragPath)
+{
+    uint32_t      vertex, fragment;
     std::ifstream file;
-    std::string text;
-    char infoLog[512];
+    std::string   text;
+    char          infoLog[512];
     file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
-    {  // Vertex Shader
+    {    // Vertex Shader
         // Read file
         file.open(vertPath, std::ios::in | std::ios::binary | std::ios::ate);
         text.resize(file.tellg());
@@ -21,22 +22,22 @@ Shader::Shader(std::string vertPath, std::string fragPath) {
         file.close();
 
         // Compile
-        vertex = glCreateShader(GL_VERTEX_SHADER);
+        vertex            = glCreateShader(GL_VERTEX_SHADER);
         const char *c_str = text.c_str();
         glShaderSource(vertex, 1, &c_str, NULL);
         glCompileShader(vertex);
 
         // Error checking
         glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
-        if (!success) {
+        if (!success)
+        {
             glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-            std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n"
-                      << infoLog << std::endl;
+            std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
             return;
         }
     }
 
-    {  // Fragment Shader
+    {    // Fragment Shader
         // Read file
         file.open(fragPath, std::ios::in | std::ios::binary | std::ios::ate);
         text.resize(file.tellg());
@@ -45,22 +46,22 @@ Shader::Shader(std::string vertPath, std::string fragPath) {
         file.close();
 
         // Compile
-        fragment = glCreateShader(GL_FRAGMENT_SHADER);
+        fragment          = glCreateShader(GL_FRAGMENT_SHADER);
         const char *c_str = text.c_str();
         glShaderSource(fragment, 1, &c_str, NULL);
         glCompileShader(fragment);
 
         // Error checking
         glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
-        if (!success) {
+        if (!success)
+        {
             glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-            std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n"
-                      << infoLog << std::endl;
+            std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
             return;
         }
     }
 
-    {  // Shader Program
+    {    // Shader Program
         program = glCreateProgram();
 
         // Link Vertex & Fragment Shaders
@@ -70,10 +71,10 @@ Shader::Shader(std::string vertPath, std::string fragPath) {
 
         // Error checking
         glGetProgramiv(program, GL_LINK_STATUS, &success);
-        if (!success) {
+        if (!success)
+        {
             glGetProgramInfoLog(program, 512, NULL, infoLog);
-            std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n"
-                      << infoLog << std::endl;
+            std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
             return;
         }
     }
@@ -84,8 +85,12 @@ Shader::Shader(std::string vertPath, std::string fragPath) {
     success = true;
 }
 
-Shader::~Shader() {
+Shader::~Shader()
+{
     if (success) glDeleteProgram(program);
 }
 
-void Shader::Use() { glUseProgram(program); }
+void Shader::Use()
+{
+    glUseProgram(program);
+}

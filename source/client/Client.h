@@ -5,8 +5,9 @@
 
 #include "render/shader.h"
 
-class Client {
-   public:
+class Client
+{
+public:
     Client();
     ~Client();
 
@@ -15,9 +16,9 @@ class Client {
 
     bool isAlive;
 
-   private:
-    GLFWwindow* window;
-    Shader shader;
+private:
+    GLFWwindow *window;
+    Shader      shader;
 
-    static void processInput(GLFWwindow* window, int key, int, int action, int);
+    static void processInput(GLFWwindow *window, int key, int, int action, int);
 };
