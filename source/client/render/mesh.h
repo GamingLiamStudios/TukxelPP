@@ -6,8 +6,6 @@
 #include <glm/vec3.hpp>
 #include <vector>
 
-#include "util/array.h"
-
 struct Vertex
 {
     glm::vec3 pos;

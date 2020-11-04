@@ -20,5 +20,6 @@ private:
     GLFWwindow *window;
     Shader      shader;
 
+    void        init();
     static void processInput(GLFWwindow *window, int key, int, int action, int);
 };

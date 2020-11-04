@@ -54,5 +54,5 @@ cmake -G "Visual Studio 16 Win64" ..
 ...
 ```
 
-If you compile and run, you should now have a upto date copy of Tukxel. 
+If you compile and run, you should now have a upto date copy of Tukxel.  
 Disclaimer: First compile will take a longer than subsequent compiles.

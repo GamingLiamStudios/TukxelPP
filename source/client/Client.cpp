@@ -9,6 +9,8 @@
 #endif
 #include "stb_image.h"
 
+#include "order.h"
+
 Client::Client()
 {
     // Initalize GLFW
@@ -86,16 +88,21 @@ Client::Client()
     });
     glfwSetKeyCallback(window, &Client::processInput);
 
-    // Initalize for Rendering
-    stbi_set_flip_vertically_on_load(true);
-    shader = Shader("./res/vertex.vert", "./res/fragment.frag");
-    if (!shader.success) isAlive = false;
+    init();
 }
 
 Client::~Client()
 {
     // Destroy all remaining GLFW stuff
     glfwTerminate();
+}
+
+void Client::init()
+{
+    // Initalize Rendering
+    stbi_set_flip_vertically_on_load(true);
+    shader = Shader("./res/vertex.vert", "./res/fragment.frag");
+    if (!shader.success) isAlive = false;
 }
 
 void Client::render()

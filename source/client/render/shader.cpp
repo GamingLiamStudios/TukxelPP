@@ -32,7 +32,7 @@ Shader::Shader(std::string vertPath, std::string fragPath)
         if (!success)
         {
             glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-            std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+            std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << "\n";
             return;
         }
     }
@@ -56,7 +56,7 @@ Shader::Shader(std::string vertPath, std::string fragPath)
         if (!success)
         {
             glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-            std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+            std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << "\n";
             return;
         }
     }
@@ -74,7 +74,7 @@ Shader::Shader(std::string vertPath, std::string fragPath)
         if (!success)
         {
             glGetProgramInfoLog(program, 512, NULL, infoLog);
-            std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+            std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << "\n";
             return;
         }
     }
