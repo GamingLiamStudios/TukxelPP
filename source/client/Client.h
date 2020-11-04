@@ -12,7 +12,7 @@ public:
     ~Client();
 
     void render();
-    void tick();
+    //void tick();
 
     bool isAlive;
 
