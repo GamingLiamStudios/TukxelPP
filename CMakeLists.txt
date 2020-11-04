@@ -43,13 +43,13 @@ set(SOURCE_FILES
     source/client/world/chunk.cpp
 )
 
-if(WIN32)
-    add_executable(${PROJECT_NAME} ${SOURCE_FILES} Icon.rc)
-else()
-    add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-endif()
+#if(WIN32)
+#    add_executable(${PROJECT_NAME} ${SOURCE_FILES} Icon.rc)
+#else()
+#    add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+#endif()
 
-target_link_libraries(${PROJECT_NAME} glfw glm::glm)
+target_link_libraries(${PROJECT_NAME} glfw glm::glm) # <- error here?
 
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
