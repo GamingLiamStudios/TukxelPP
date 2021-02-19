@@ -25,14 +25,14 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glm)
 
 # Include zlib-ng(Not currently used)
-message("Configuring zlib-ng")
-FetchContent_Declare(
-        zlib_ng
-        GIT_REPOSITORY https://github.com/zlib-ng/zlib-ng
-        GIT_TAG        1.9.9-b1
-)
+#message("Configuring zlib-ng")
+#FetchContent_Declare(
+#        zlib_ng
+#        GIT_REPOSITORY https://github.com/zlib-ng/zlib-ng
+#        GIT_TAG        v2.0.0-RC2
+#)
 
-set(ZLIB_ENABLE_TESTS OFF)
-set(WITH_NATIVE_INSTRUCTIONS ON)
+#set(ZLIB_ENABLE_TESTS OFF)
+#set(WITH_NATIVE_INSTRUCTIONS ON)
 
-FetchContent_MakeAvailable(zlib_ng)
+#FetchContent_MakeAvailable(zlib_ng)
