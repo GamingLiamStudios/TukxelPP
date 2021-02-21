@@ -12,7 +12,7 @@
 struct Texture
 {
 public:
-    GLuint texture;
+    unsigned texture;
 
     Texture(std::string path)
     {
