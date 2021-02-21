@@ -1,5 +1,6 @@
 #include "client.h"
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -9,7 +10,7 @@
 #endif
 #include "stb_image.h"
 
-#include "order.h"
+#include "util/order.h"
 
 Client::Client()
 {
@@ -41,13 +42,23 @@ Client::Client()
 
         // Extract useful data from header
         fs.seekg(8, std::ios::cur);
-        uint32_t length, offset;    // Assumes host is Little Endian
+        u32 length, offset;    // Assumes host is Little Endian
         fs.read((char *) &length, 4);
         fs.read((char *) &offset, 4);
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+        std::reverse((u8 *) &length, (u8 *) &length + 4);
+        std::reverse((u8 *) &offset, (u8 *) &offset + 4);
+#elif defined(__BYTE_ORDER_RUNTIME__)
+        if (is_system_little_endian())
+        {
+            std::reverse((u8 *) &length, (u8 *) &length + 4);
+            std::reverse((u8 *) &offset, (u8 *) &offset + 4);
+        }
+#endif
 
         // Read Stream from start of PNG header to buffer
         fs.seekg(offset, std::ios::beg);
-        std::vector<uint8_t> buffer;
+        std::vector<u8> buffer;
         buffer.resize(length);
         fs.read((char *) buffer.data(), length);
         fs.close();
@@ -102,7 +113,28 @@ void Client::init()
     // Initalize Rendering
     stbi_set_flip_vertically_on_load(true);
     shader = Shader("./res/vertex.vert", "./res/fragment.frag");
-    if (!shader.success) isAlive = false;
+    if (!shader.success)
+    {
+        isAlive = false;
+        return;
+    }
+
+    // Load Modules
+
+    // Load mesh
+    std::vector<Vertex> verticies = {
+        { { 0.5f, 0.5f, 0.0f } },      // top right
+        { { 0.5f, -0.5f, 0.0f } },     // bottom right
+        { { -0.5f, -0.5f, 0.0f } },    // bottom left
+        { { -0.5f, 0.5f, 0.0f } }      // top left
+    };
+
+    std::vector<unsigned> indicies = {
+        0, 1, 3,    // first triangle
+        1, 2, 3     // second triangle
+    };
+
+    meshes.push_back(std::make_shared<Mesh>(verticies, indicies));
 }
 
 void Client::render()
@@ -115,6 +147,11 @@ void Client::render()
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Render
+    shader.Use();
+
+    for (auto &mesh : meshes) mesh->render();
+
+    glBindVertexArray(0);
 
     // Display changes
     glfwSwapBuffers(window);

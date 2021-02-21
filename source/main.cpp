@@ -1,11 +1,13 @@
 ﻿#include <iostream>
 
-#include "client/Client.h"
+#include "client.h"
 
-int main() {
+int main()
+{
     std::cout << "Hello World!" << std::endl;
     Client client = Client();
-    while (client.isAlive) {
+    while (client.isAlive)
+    {
         client.render();
         // client.tick(); TODO: Add Tick
     }

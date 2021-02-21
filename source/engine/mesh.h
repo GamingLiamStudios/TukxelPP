@@ -4,37 +4,51 @@
 
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+
+#include "util/types.h"
+
 #include <vector>
+#include <cstddef>
 
 struct Vertex
 {
     glm::vec3 pos;
-    glm::vec3 normal;
+    /* union
+    {
+        struct
+        {
+            u8 w : 2;
+            u16 z : 10;
+            u16 y : 10;
+            u16 x : 10;
+        } v;
+        u32 p;
+    } normal; */
+    // glm::u16vec2 texCoord;
 };
 
 class Mesh
 {
 private:
-    std::vector<Vertex>    verticies;
-    std::vector<glm::vec2> textureCoords;
-    std::vector<int>       indicies;
+    std::vector<Vertex>   verticies;
+    std::vector<unsigned> indicies;
 
-    uint32_t buffers[3];    // VBOs & EBOs
+    unsigned buffers[2];    // VBO & EBO
 
 public:
-    uint32_t VAO;
+    unsigned VAO;
 
-    Mesh(std::vector<Vertex> verticies, std::vector<int> indicies)
+    Mesh(std::vector<Vertex> verticies, std::vector<unsigned> indicies)
         : verticies(verticies), indicies(indicies)
     {    // Setup Mesh for rendering
         // Gen buffers
         glGenVertexArrays(1, &VAO);
-        glGenBuffers(3, buffers);
+        glGenBuffers(2, buffers);
         glBindVertexArray(VAO);
 
         {    // Vertex VBO
             // Place Verticies into VBO buffer
-            glBindBuffer(GL_VERTEX_ARRAY, buffers[0]);
+            glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
             glBufferData(
               GL_ARRAY_BUFFER,
               sizeof(Vertex) * verticies.size(),
@@ -42,43 +56,39 @@ public:
               GL_STATIC_DRAW);
 
             // Tell Shaders what data is stored in a Vertex
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                                  0);    // pos
             glVertexAttribPointer(
-              1,
+              0,
               3,
               GL_FLOAT,
               GL_FALSE,
               sizeof(Vertex),
-              (void *) (3 * sizeof(float)));    // normal
-        }
+              (void *) offsetof(Vertex, pos));    // pos
 
-        {    // Texture Coordinate VBO
-            // Place Texture Coordinates into a VBO
-            glBindBuffer(GL_VERTEX_ARRAY, buffers[1]);
-            glBufferData(
-              GL_ARRAY_BUFFER,
-              sizeof(glm::vec2) * textureCoords.size(),
-              textureCoords.data(),
-              GL_STATIC_DRAW);
-
-            // Tell Shaders what data is stored in a Texture Coordinate
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2),
-                                  0);    // texCoord
+            /*
+            glVertexAttribPointer(
+             1,
+             4,
+             GL_INT_2_10_10_10_REV,
+             GL_FALSE,
+             sizeof(Vertex),
+             (void *) offsetof(Vertex, normal));    // normal
+            glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_FALSE, sizeof(Vertex),
+                                  (void *) offsetof(Vertex, texCoord));    // texCoord
+            */
         }
 
         // Place Indicies into EBO buffer
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[2]);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[1]);
         glBufferData(
           GL_ELEMENT_ARRAY_BUFFER,
-          sizeof(int) * indicies.size(),
+          sizeof(unsigned) * indicies.size(),
           indicies.data(),
           GL_STATIC_DRAW);
 
         // Enable Vertex Attribute Arrays
         glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
+        // glEnableVertexAttribArray(1);
+        // glEnableVertexAttribArray(2);
 
         // Unbind buffers
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -88,7 +98,7 @@ public:
     ~Mesh()
     {
         glDeleteVertexArrays(1, &VAO);
-        glDeleteBuffers(3, buffers);
+        glDeleteBuffers(2, buffers);
     }
 
     void render()
@@ -99,5 +109,5 @@ public:
         glDrawElements(GL_TRIANGLES, indicies.size(), GL_UNSIGNED_INT, 0);
     }
 
-    size_t pointsInMesh() { return indicies.size(); }
+    inline size_t pointsInMesh() { return indicies.size(); }
 };

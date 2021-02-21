@@ -1,13 +1,14 @@
 #pragma once
 
-#include <stdint.h>
+#include "util/types.h"
 
 #include <string>
+#include <memory>
 
 class Shader
 {
 private:
-    uint32_t program;
+    std::shared_ptr<unsigned> program;
 
 public:
     int success;

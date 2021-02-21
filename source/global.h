@@ -1,20 +1,19 @@
 #pragma once
 
-#include "slot_map.h"
-#include <stdint.h>
+#include <vector>
 
-// TODO: Make this more memory efficent
+#include "util/types.h"
 
 // Key:   Block ID
 // Value: Module Handle
-static TSlotMap<int> blockMap;
+static std::vector<u32> blockMap;
 
 // Key:   Module Handle
 // Value: Offset to internal Block ID
-static TSlotMap<uint64_t> moduleOffsets;
+static std::vector<u16> moduleOffsets;
 
-// Converts BlockID/Module Handle pair into internal_blockID for Modules
-static inline const uint64_t internal_blockID(int moduleHandle, uint64_t blockID)
+// Converts BlockID/Module Handle pair into internal_blockID for internal Module use
+static inline const u32 internal_blockID(u16 moduleHandle, u32 blockID)
 {
-    return blockID - *moduleOffsets.at(moduleHandle);
+    return blockID - moduleOffsets.at(moduleHandle);
 }

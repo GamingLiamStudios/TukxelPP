@@ -37,11 +37,11 @@ public:
         glTexImage2D(
           GL_TEXTURE_2D,
           0,
-          GL_RGB + nrChannels - 3,
+          GL_GREEN + nrChannels,    // Makes GL_RGB if Channels 3, GL_RGBA if 4
           width,
           height,
           0,
-          GL_RGB + nrChannels - 3,
+          GL_GREEN + nrChannels,
           GL_UNSIGNED_BYTE,
           data);
         glGenerateMipmap(GL_TEXTURE_2D);

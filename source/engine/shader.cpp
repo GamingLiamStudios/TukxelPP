@@ -7,7 +7,7 @@
 
 Shader::Shader(std::string vertPath, std::string fragPath)
 {
-    uint32_t      vertex, fragment;
+    unsigned      vertex, fragment;
     std::ifstream file;
     std::string   text;
     char          infoLog[512];
@@ -62,18 +62,18 @@ Shader::Shader(std::string vertPath, std::string fragPath)
     }
 
     {    // Shader Program
-        program = glCreateProgram();
+        program = std::make_shared<unsigned>(glCreateProgram());
 
         // Link Vertex & Fragment Shaders
-        glAttachShader(program, vertex);
-        glAttachShader(program, fragment);
-        glLinkProgram(program);
+        glAttachShader(*program, vertex);
+        glAttachShader(*program, fragment);
+        glLinkProgram(*program);
 
         // Error checking
-        glGetProgramiv(program, GL_LINK_STATUS, &success);
+        glGetProgramiv(*program, GL_LINK_STATUS, &success);
         if (!success)
         {
-            glGetProgramInfoLog(program, 512, NULL, infoLog);
+            glGetProgramInfoLog(*program, 512, NULL, infoLog);
             std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << "\n";
             return;
         }
@@ -87,10 +87,10 @@ Shader::Shader(std::string vertPath, std::string fragPath)
 
 Shader::~Shader()
 {
-    if (success) glDeleteProgram(program);
+    if (success && program.unique()) glDeleteProgram(*program);
 }
 
 void Shader::Use()
 {
-    glUseProgram(program);
+    glUseProgram(*program);
 }
