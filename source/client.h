@@ -1,10 +1,10 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
-
 #include "engine/shader.h"
 #include "engine/mesh.h"
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #include <memory>
 

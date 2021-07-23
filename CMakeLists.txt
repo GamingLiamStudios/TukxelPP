@@ -10,7 +10,6 @@ if(NOT MSVC)
 endif()
 
 add_subdirectory(extern)
-add_compile_definitions(GLFW_INCLUDE_NONE)
 
 if(WIN32)
     add_executable(${PROJECT_NAME} Icon.rc)
@@ -36,7 +35,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     source/engine/shader.cpp
 )
 
-add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/res $<TARGET_FILE_DIR:${PROJECT_NAME}>/res
-    DEPENDS ${PROJECT_RESOURCES})
+file(GLOB_RECURSE resources res/*.*)
+add_custom_target(resources_copy ALL
+                  COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+                  ${resources} ${CMAKE_BINARY_DIR}/${PROJECT_NAME}/res)

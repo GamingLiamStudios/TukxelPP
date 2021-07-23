@@ -7,17 +7,19 @@
 
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_STATIC
+#include <stb_image.h>
 #endif
-#include "stb_image.h"
 
+#include "engine/texture.h"
 #include "util/order.h"
 
 Client::Client()
 {
     // Initalize GLFW
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -94,9 +96,9 @@ Client::Client()
     // Initalize Window
     glViewport(0, 0, 800, 600);
     glfwSetWindowUserPointer(window, this);
-    glfwSetFramebufferSizeCallback(window, [](GLFWwindow *window, int width, int height) {
-        glViewport(0, 0, width, height);
-    });
+    glfwSetFramebufferSizeCallback(
+      window,
+      [](GLFWwindow *window, int width, int height) { glViewport(0, 0, width, height); });
     glfwSetKeyCallback(window, &Client::processInput);
 
     init();
@@ -123,10 +125,10 @@ void Client::init()
 
     // Load mesh
     std::vector<Vertex> verticies = {
-        { { 0.5f, 0.5f, 0.0f } },      // top right
-        { { 0.5f, -0.5f, 0.0f } },     // bottom right
-        { { -0.5f, -0.5f, 0.0f } },    // bottom left
-        { { -0.5f, 0.5f, 0.0f } }      // top left
+        { { 0.5f, 0.5f, 0.0f }, { 65535, 65535 } },    // top right
+        { { 0.5f, -0.5f, 0.0f }, { 65535, 0 } },       // bottom right
+        { { -0.5f, -0.5f, 0.0f }, { 0, 0 } },          // bottom left
+        { { -0.5f, 0.5f, 0.0f }, { 0, 65535 } }        // top left
     };
 
     std::vector<unsigned> indicies = {
@@ -134,7 +136,7 @@ void Client::init()
         1, 2, 3     // second triangle
     };
 
-    meshes.push_back(std::make_shared<Mesh>(verticies, indicies));
+    meshes.emplace_back(std::make_shared<Mesh>(verticies, indicies, Texture("res/pog.jpg")));
 }
 
 void Client::render()
